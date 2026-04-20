@@ -368,16 +368,21 @@ def match_symptoms_from_text(text):
 
 
 def generate_gradcam(img_path, save_path):
+    current_model = get_model()  # ← get_model() use பண்ணு
+    if current_model is None:
+        return None
+    
     last_conv = None
-    for layer in reversed(model.layers):
+    for layer in reversed(current_model.layers):  # ← model → current_model
         if isinstance(layer, tf.keras.layers.Conv2D):
             last_conv = layer.name
             break
     if not last_conv:
         return None
+    
     grad_model = tf.keras.models.Model(
-        inputs=model.inputs,
-        outputs=[model.get_layer(last_conv).output, model.output]
+        inputs=current_model.inputs,   # ← model → current_model
+        outputs=[current_model.get_layer(last_conv).output, current_model.output]  # ← fix
     )
     img_array = preprocess_image(img_path)
     with tf.GradientTape() as tape:
@@ -395,8 +400,7 @@ def generate_gradcam(img_path, save_path):
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     cv2.imwrite(save_path, overlay)
     return save_path
-
-
+    
 def generate_pdf_report(result, img_path, heatmap_path, filename, symptoms_text=''):
     buffer = io.BytesIO()
     doc    = SimpleDocTemplate(buffer, pagesize=A4,
