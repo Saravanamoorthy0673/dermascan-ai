@@ -196,7 +196,7 @@ def get_model():
 def load_skin_model():
     global model
     try:
-       model = load_model(MODEL_PATH, compile=False)
+        model = load_model(MODEL_PATH, compile=False)
         print(f"[OK] Model loaded from {MODEL_PATH}")
     except Exception as e:
         print(f"[ERROR] Could not load model: {e}")
