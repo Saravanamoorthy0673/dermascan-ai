@@ -194,6 +194,8 @@ def load_skin_model():
     except Exception as e:
         print(f"[ERROR] Could not load model: {e}")
 
+# ✅ ADD THIS (VERY IMPORTANT)
+load_skin_model()
 # ─── HELPERS ──────────────────────────────────────────────────────
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
