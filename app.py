@@ -590,9 +590,9 @@ def predict():
     file.save(save_path)
 
     try:
-        result  = predict_disease(save_path)   # ← Now uses MC Dropout internally
-        gradcam = generate_gradcam(save_path, heatmap_path)
-
+        gradcam = generate_gradcam(save_path, heatmap_path)  #先 gradcam ✅
+        result  = predict_disease(save_path)                  # அப்புறம் predict ✅
+        
         symptoms_text = request.form.get('symptoms', '')
         now           = datetime.now()
 
