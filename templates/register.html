@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DermaScan AI — Register</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#f0ede8;--surface:#ffffff;--border:#ddd8d0;--text:#1c1a17;--muted:#7a7570;--green:#2d6a4f;--green2:#52b788;--danger:#b83232;--r:14px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+.logo h1{font-family:'Fraunces',serif;font-size:26px;font-weight:400;}
+.logo h1 span{color:var(--green);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:36px 32px;width:100%;max-width:400px;}
+.card-title{font-family:'Fraunces',serif;font-size:22px;font-weight:400;margin-bottom:6px;}
+.card-sub{font-size:13px;color:var(--muted);margin-bottom:28px;}
+.field{margin-bottom:18px;}
+.field label{display:block;font-size:12px;font-weight:500;color:var(--text);margin-bottom:6px;letter-spacing:0.3px;}
+.field input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;}
+.field input:focus{border-color:var(--green2);background:white;}
+.field input.error-input{border-color:var(--danger);}
+.field-error{font-size:11px;color:var(--danger);margin-top:4px;}
+.field-hint{font-size:11px;color:var(--muted);margin-top:4px;}
+.submit-btn{width:100%;padding:13px;border-radius:8px;border:none;background:var(--green);color:white;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;transition:background .2s;margin-top:8px;}
+.submit-btn:hover{background:#245a43;}
+.bottom-link{text-align:center;margin-top:20px;font-size:13px;color:var(--muted);}
+.bottom-link a{color:var(--green);text-decoration:none;font-weight:500;}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;}
+.divider hr{flex:1;border:none;border-top:1px solid var(--border);}
+.divider span{font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="logo">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  <h1>Derma<span>Scan</span> AI</h1>
+</div>
+
+<div class="card">
+  <div class="card-title">Create account</div>
+  <div class="card-sub">Register to track your skin health over time</div>
+
+  <form method="POST" action="/register" id="reg-form">
+    <div class="field">
+      <label>Full name</label>
+      <input type="text" name="name" id="name"
+             placeholder="Your full name"
+             value="{{ name or '' }}" required/>
+      <div class="field-error" id="name-error"></div>
+    </div>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" name="email" id="email"
+             placeholder="you@example.com"
+             value="{{ email or '' }}" required/>
+      <div class="field-error" id="email-error">
+        {% if error and 'email' in error.lower() or error and 'Email' in error %}{{ error }}{% endif %}
+      </div>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" name="password" id="password"
+             placeholder="Minimum 6 characters" required/>
+      <div class="field-error" id="password-error">
+        {% if error and 'password' in error.lower() or error and 'Password' in error %}{{ error }}{% endif %}
+      </div>
+      <div class="field-hint">At least 6 characters — stored securely</div>
+    </div>
+    <button type="submit" class="submit-btn">Create Account</button>
+  </form>
+
+  <div class="divider"><hr/><span>or</span><hr/></div>
+  <div class="bottom-link">Already have an account? <a href="/login">Login here</a></div>
+</div>
+
+<script>
+  // Show red border on fields if server error
+  {% if error %}
+    {% if 'email' in error.lower() or 'Email' in error %}
+    document.getElementById('email').classList.add('error-input');
+    {% endif %}
+    {% if 'password' in error.lower() or 'Password' in error %}
+    document.getElementById('password').classList.add('error-input');
+    {% endif %}
+  {% endif %}
+
+  // Client side validation before submit
+  document.getElementById('reg-form').addEventListener('submit', function(e) {
+    let valid = true;
+    const name     = document.getElementById('name');
+    const email    = document.getElementById('email');
+    const password = document.getElementById('password');
+    const nameErr  = document.getElementById('name-error');
+    const emailErr = document.getElementById('email-error');
+    const passErr  = document.getElementById('password-error');
+
+    // Clear all errors
+    [nameErr, emailErr, passErr].forEach(el => el.textContent = '');
+    [name, email, password].forEach(el => el.classList.remove('error-input'));
+
+    if (!name.value.trim()) {
+      nameErr.textContent = 'Full name is required.';
+      name.classList.add('error-input');
+      valid = false;
+    }
+
+    if (!email.value.trim()) {
+      emailErr.textContent = 'Email is required.';
+      email.classList.add('error-input');
+      valid = false;
+    } else if (!email.value.includes('@')) {
+      emailErr.textContent = 'Enter a valid email address.';
+      email.classList.add('error-input');
+      valid = false;
+    }
+
+    if (!password.value.trim()) {
+      passErr.textContent = 'Password is required.';
+      password.classList.add('error-input');
+      valid = false;
+    } else if (password.value.length < 6) {
+      passErr.textContent = 'Password must be at least 6 characters.';
+      password.classList.add('error-input');
+      valid = false;
+    }
+
+    if (!valid) e.preventDefault();
+  });
+</script>
+</body>
+</html>

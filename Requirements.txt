@@ -1,0 +1,9 @@
+flask
+gunicorn
+tensorflow-cpu
+numpy
+opencv-python
+pillow
+flask_sqlalchemy
+reportlab
+requests

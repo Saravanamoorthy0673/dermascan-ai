@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DermaScan AI — History</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{--bg:#f0ede8;--surface:#ffffff;--border:#ddd8d0;--text:#1c1a17;--muted:#7a7570;--green:#2d6a4f;--green2:#52b788;--danger:#b83232;--warn:#e67e22;--r:14px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* HEADER */
+header{background:var(--green);color:white;padding:16px 40px;display:flex;align-items:center;gap:14px;}
+header h1{font-family:'Fraunces',serif;font-size:22px;font-weight:400;}
+header h1 span{color:var(--green2);}
+.nav{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.nav a{color:rgba(255,255,255,0.8);text-decoration:none;font-size:12px;padding:5px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);transition:background .2s;}
+.nav a:hover{background:rgba(255,255,255,0.1);}
+.nav a.active{background:rgba(255,255,255,0.2);color:white;}
+.nav-user{font-size:12px;color:rgba(255,255,255,0.7);margin-right:4px;}
+
+/* MAIN */
+main{max-width:900px;margin:0 auto;padding:28px 24px 60px;}
+.page-header{margin-bottom:24px;}
+.page-title{font-family:'Fraunces',serif;font-size:26px;font-weight:400;margin-bottom:4px;}
+.page-sub{font-size:13px;color:var(--muted);}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+@media(max-width:600px){.stats-row{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;}
+.stat-num{font-family:'Fraunces',serif;font-size:26px;font-weight:400;color:var(--green);}
+.stat-label{font-size:11px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;}
+
+/* FILTER */
+.filter-row{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.filter-btn{font-size:12px;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;font-family:inherit;transition:all .2s;}
+.filter-btn:hover{border-color:var(--green2);color:var(--green);}
+.filter-btn.active{background:var(--green);color:white;border-color:var(--green);}
+
+/* TIMELINE */
+.timeline{position:relative;}
+.tl-item{display:flex;gap:14px;margin-bottom:16px;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.tl-left{display:flex;flex-direction:column;align-items:center;gap:0;}
+.tl-dot{width:38px;height:38px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;background:var(--green);}
+.tl-dot.melanoma{background:var(--danger);}
+.tl-dot.moderate{background:var(--warn);}
+.tl-line{width:1px;flex:1;background:var(--border);margin-top:4px;}
+.tl-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;transition:border-color .2s;}
+.tl-card:hover{border-color:var(--green2);}
+
+.tl-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
+.tl-disease{font-weight:500;font-size:15px;}
+.tl-disease.melanoma{color:var(--danger);}
+.tl-meta{display:flex;align-items:center;gap:8px;}
+.tl-date{font-size:11px;color:var(--muted);}
+.delete-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:11px;padding:3px 8px;border-radius:4px;transition:color .2s,background .2s;font-family:inherit;}
+.delete-btn:hover{color:var(--danger);background:#fde8e8;}
+
+.tl-badges{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.conf-chip{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;}
+.ch{background:#d8f3dc;color:var(--green);}
+.cm{background:#fef3cd;color:#856404;}
+.cl{background:#fde8e8;color:var(--danger);}
+.sev-badge{font-size:11px;color:var(--muted);padding:3px 10px;border-radius:20px;background:var(--bg);}
+
+.tl-symptoms{font-size:12px;color:var(--muted);font-style:italic;margin-bottom:8px;}
+.tl-images{display:flex;gap:8px;}
+.tl-images img{width:56px;height:56px;object-fit:cover;border-radius:6px;border:1px solid var(--border);cursor:pointer;transition:transform .2s;}
+.tl-images img:hover{transform:scale(1.05);}
+.img-label{font-size:10px;color:var(--muted);text-align:center;margin-top:2px;}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted);}
+.empty-state svg{opacity:.15;margin-bottom:16px;}
+.empty-state p{font-size:14px;margin-bottom:12px;}
+.empty-state a{color:var(--green);text-decoration:none;font-weight:500;padding:10px 20px;border:1px solid var(--green);border-radius:8px;display:inline-block;}
+
+/* LOADING */
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:14px;}
+.spinner-sm{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* IMAGE MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal-img{max-width:90vw;max-height:90vh;border-radius:10px;}
+</style>
+</head>
+<body>
+
+<header>
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  <h1>Derma<span>Scan</span> AI</h1>
+  <div class="nav">
+    <span class="nav-user">👤 {{ user_name }}</span>
+    <a href="/">New Scan</a>
+    <a href="/history" class="active">History</a>
+    <a href="/progress">Progress</a>
+    <a href="/logout">Logout</a>
+  </div>
+</header>
+
+<main>
+  <div class="page-header">
+    <div class="page-title">Scan History</div>
+    <div class="page-sub">All your past skin scans — tap an image to enlarge</div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num" id="stat-total">—</div>
+      <div class="stat-label">Total scans</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-common">—</div>
+      <div class="stat-label">Most common</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-avg">—</div>
+      <div class="stat-label">Avg confidence</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="stat-last">—</div>
+      <div class="stat-label">Last scan</div>
+    </div>
+  </div>
+
+  <!-- FILTER BUTTONS -->
+  <div class="filter-row" id="filter-row">
+    <button class="filter-btn active" onclick="filterBy('all', this)">All</button>
+    <button class="filter-btn" onclick="filterBy('Acne', this)">Acne</button>
+    <button class="filter-btn" onclick="filterBy('Melanoma', this)">Melanoma</button>
+    <button class="filter-btn" onclick="filterBy('Psoriasis', this)">Psoriasis</button>
+    <button class="filter-btn" onclick="filterBy('Rosacea', this)">Rosacea</button>
+    <button class="filter-btn" onclick="filterBy('Vitiligo', this)">Vitiligo</button>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="loading" id="loading">
+    <span class="spinner-sm"></span>Loading your scan history...
+  </div>
+  <div class="timeline" id="timeline"></div>
+  <div class="empty-state" id="empty-state" style="display:none;">
+    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    <p>No scans found.</p>
+    <a href="/">Upload your first skin image</a>
+  </div>
+</main>
+
+<!-- IMAGE MODAL -->
+<div class="modal-bg" id="modal" onclick="closeModal()">
+  <img class="modal-img" id="modal-img" src="" alt="Enlarged"/>
+</div>
+
+<script>
+let allRecords   = [];
+let activeFilter = 'all';
+
+window.addEventListener('load', loadHistory);
+
+async function loadHistory() {
+  try {
+    const res     = await fetch('/get_history');
+    allRecords    = await res.json();
+    document.getElementById('loading').style.display = 'none';
+    if (allRecords.length === 0) {
+      document.getElementById('empty-state').style.display = 'block';
+      return;
+    }
+    renderStats(allRecords);
+    renderTimeline(allRecords);
+  } catch(e) {
+    document.getElementById('loading').textContent = 'Error loading history. Is Flask running?';
+  }
+}
+
+function renderStats(records) {
+  document.getElementById('stat-total').textContent = records.length;
+
+  const counts = {};
+  records.forEach(r => counts[r.disease] = (counts[r.disease] || 0) + 1);
+  const top = Object.entries(counts).sort((a,b) => b[1]-a[1])[0];
+  document.getElementById('stat-common').textContent = top ? top[0] : '—';
+
+  const avg = records.reduce((s,r) => s + r.confidence, 0) / records.length;
+  document.getElementById('stat-avg').textContent = avg.toFixed(1) + '%';
+
+  const last = records[0]?.date?.split(' ').slice(0,2).join(' ') || '—';
+  document.getElementById('stat-last').textContent = last;
+}
+
+function filterBy(disease, btn) {
+  activeFilter = disease;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = disease === 'all' ? allRecords : allRecords.filter(r => r.disease === disease);
+  renderTimeline(filtered);
+}
+
+function renderTimeline(records) {
+  const tl = document.getElementById('timeline');
+  const empty = document.getElementById('empty-state');
+  tl.innerHTML = '';
+
+  if (records.length === 0) {
+    empty.style.display = 'block';
+    empty.querySelector('p').textContent = activeFilter === 'all'
+      ? 'No scans yet.' : `No ${activeFilter} scans found.`;
+    return;
+  }
+  empty.style.display = 'none';
+
+  records.forEach((r, idx) => {
+    const isMelanoma = r.disease === 'Melanoma';
+    const confClass  = r.confidence >= 70 ? 'ch' : r.confidence >= 45 ? 'cm' : 'cl';
+    const dotClass   = isMelanoma ? 'melanoma' : r.confidence < 50 ? 'moderate' : '';
+    const isLast     = idx === records.length - 1;
+
+    const item = document.createElement('div');
+    item.className   = 'tl-item';
+    item.dataset.id  = r.id;
+    item.dataset.dis = r.disease;
+
+    item.innerHTML = `
+      <div class="tl-left">
+        <div class="tl-dot ${dotClass}">${r.disease.slice(0,2).toUpperCase()}</div>
+        ${!isLast ? '<div class="tl-line"></div>' : ''}
+      </div>
+      <div class="tl-card">
+        <div class="tl-top">
+          <span class="tl-disease ${isMelanoma?'melanoma':''}">${r.disease}${isMelanoma?' ⚠':''}</span>
+          <div class="tl-meta">
+            <span class="tl-date">${r.date} · ${r.time}</span>
+            <button class="delete-btn" onclick="deleteRecord(${r.id}, this)">✕ Delete</button>
+          </div>
+        </div>
+        <div class="tl-badges">
+          <span class="conf-chip ${confClass}">${r.confidence.toFixed(1)}% confidence</span>
+          ${r.severity ? `<span class="sev-badge">${r.severity}</span>` : ''}
+        </div>
+        ${r.symptoms ? `<div class="tl-symptoms">"${r.symptoms}"</div>` : ''}
+        <div class="tl-images">
+          ${r.image_url   ? `<div><img src="${r.image_url}"   onclick="openModal('${r.image_url}')"   title="Original image"/><div class="img-label">Original</div></div>` : ''}
+          ${r.heatmap_url ? `<div><img src="${r.heatmap_url}" onclick="openModal('${r.heatmap_url}')" title="Grad-CAM heatmap"/><div class="img-label">Heatmap</div></div>` : ''}
+        </div>
+      </div>`;
+    tl.appendChild(item);
+  });
+}
+
+async function deleteRecord(id, btn) {
+  if (!confirm('Delete this scan record?')) return;
+  try {
+    await fetch(`/delete_record/${id}`, { method: 'DELETE' });
+    const item = btn.closest('.tl-item');
+    item.style.opacity = '0';
+    item.style.transition = 'opacity .3s';
+    setTimeout(() => {
+      item.remove();
+      allRecords = allRecords.filter(r => r.id !== id);
+      renderStats(allRecords);
+      if (allRecords.length === 0) {
+        document.getElementById('empty-state').style.display = 'block';
+      }
+    }, 300);
+  } catch(e) {
+    alert('Could not delete record. Try again.');
+  }
+}
+
+function openModal(src)  { document.getElementById('modal-img').src = src; document.getElementById('modal').classList.add('open'); }
+function closeModal()    { document.getElementById('modal').classList.remove('open'); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+venv/
+.venv/
+
+# Database — never push this
+dermascan.db
+
+# Uploaded files — never push these
+static/uploads/*
+static/heatmaps/*
+!static/uploads/.gitkeep
+!static/heatmaps/.gitkeep
+
+# Model — large file handled separately
+model/skin_disease_model.h5
+
+# OS files
+.DS_Store
+Thumbs.db
