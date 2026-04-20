@@ -46,7 +46,7 @@ CLASS_NAMES = ['Acne', 'Melanoma', 'Psoriasis', 'Rosacea', 'Vitiligo']
 # ─── MC DROPOUT CONFIG ────────────────────────────────────────────
 # Number of stochastic forward passes
 # அதிகமா போட்டா accurate, ஆனா slow — 20 ideal
-MC_RUNS = 20
+MC_RUNS = 5
 
 # Uncertainty thresholds (percentage)
 # இந்த values tune பண்ணலாம் உன் model-க்கு ஏத்தாப்போல
@@ -185,6 +185,13 @@ def login_required(f):
 
 # ─── LOAD MODEL ───────────────────────────────────────────────────
 model = None
+
+def get_model():
+    global model
+    if model is None:
+        print("Loading model...")
+        model = load_model(MODEL_PATH)
+    return model
     
 def load_skin_model():
     global model
@@ -194,8 +201,7 @@ def load_skin_model():
     except Exception as e:
         print(f"[ERROR] Could not load model: {e}")
 
-# ✅ ADD THIS (VERY IMPORTANT)
-load_skin_model()
+
 # ─── HELPERS ──────────────────────────────────────────────────────
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -231,7 +237,8 @@ def mc_dropout_predict(processed_image, n_runs=MC_RUNS):
     for _ in range(n_runs):
         # training=True keeps Dropout layers active during inference
         # This is the ONLY change from normal prediction
-        pred = model(processed_image, training=True)
+        model_instance = get_model()
+        pred = model_instance(processed_image, training=True)
         predictions.append(pred.numpy())
 
     # Stack all runs: shape (n_runs, 1, 5)
@@ -302,8 +309,7 @@ def predict_disease(img_path):
     Main prediction function — now uses MC Dropout instead of model.predict()
     Returns all original fields + uncertainty fields (backward compatible)
     """
-    if model is None:
-        raise RuntimeError("Model is not loaded.")
+   
 
     processed = preprocess_image(img_path)
 
@@ -803,7 +809,7 @@ if __name__ == '__main__':
         db.create_all()
         print("[OK] Database ready")
 
-    load_skin_model()
+   
 
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=False, host='0.0.0.0', port=port)
