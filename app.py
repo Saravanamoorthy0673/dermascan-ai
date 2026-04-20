@@ -39,7 +39,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 db = SQLAlchemy(app)
     
-MODEL_PATH  = 'model/skin_disease_model.h5'
+MODEL_PATH = os.path.join(os.getcwd(), "model", "skin_disease_model.h5")
 IMAGE_SIZE  = (224, 224)
 CLASS_NAMES = ['Acne', 'Melanoma', 'Psoriasis', 'Rosacea', 'Vitiligo']
 
@@ -185,7 +185,7 @@ def login_required(f):
 
 # ─── LOAD MODEL ───────────────────────────────────────────────────
 model = None
-
+    
 def load_skin_model():
     global model
     try:
