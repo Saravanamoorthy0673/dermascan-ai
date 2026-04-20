@@ -39,6 +39,9 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 db = SQLAlchemy(app)
 
+with app.app_context():
+    db.create_all()
+    
 MODEL_PATH  = 'model/skin_disease_model.h5'
 IMAGE_SIZE  = (224, 224)
 CLASS_NAMES = ['Acne', 'Melanoma', 'Psoriasis', 'Rosacea', 'Vitiligo']
