@@ -46,7 +46,7 @@ CLASS_NAMES = ['Acne', 'Melanoma', 'Psoriasis', 'Rosacea', 'Vitiligo']
 # ─── MC DROPOUT CONFIG ────────────────────────────────────────────
 # Number of stochastic forward passes
 # அதிகமா போட்டா accurate, ஆனா slow — 20 ideal
-MC_RUNS = 5
+MC_RUNS = 1
 
 # Uncertainty thresholds (percentage)
 # இந்த values tune பண்ணலாம் உன் model-க்கு ஏத்தாப்போல
@@ -190,13 +190,13 @@ def get_model():
     global model
     if model is None:
         print("Loading model...")
-        model = load_model(MODEL_PATH)
+        model = load_model(MODEL_PATH, compile=False)
     return model
     
 def load_skin_model():
     global model
     try:
-        model = load_model(MODEL_PATH)
+       model = load_model(MODEL_PATH, compile=False)
         print(f"[OK] Model loaded from {MODEL_PATH}")
     except Exception as e:
         print(f"[ERROR] Could not load model: {e}")
@@ -309,20 +309,19 @@ def predict_disease(img_path):
     Main prediction function — now uses MC Dropout instead of model.predict()
     Returns all original fields + uncertainty fields (backward compatible)
     """
-   
+    global model
+    import gc
 
     processed = preprocess_image(img_path)
 
-    # ── MC DROPOUT PREDICTION (replaces model.predict) ──
+    # ── MC DROPOUT PREDICTION ──
     predicted_index, confidence, uncertainty, all_scores = mc_dropout_predict(processed)
-    # ─────────────────────────────────────────────────────
 
     predicted_disease = CLASS_NAMES[predicted_index]
     info              = DISEASE_INFO.get(predicted_disease, {})
     uncertainty_info  = get_uncertainty_label(uncertainty)
 
-    return {
-        # Original fields — unchanged, frontend works as before
+    result = {
         'predicted_disease': predicted_disease,
         'confidence':        confidence,
         'all_scores':        all_scores,
@@ -331,18 +330,20 @@ def predict_disease(img_path):
         'symptoms':          info.get('symptoms', ''),
         'treatment':         info.get('treatment', ''),
         'severity':          info.get('severity', ''),
-
-        # ── NEW MC Dropout fields ──────────────────────────
         'uncertainty':         uncertainty,
         'uncertainty_level':   uncertainty_info['level'],
         'uncertainty_color':   uncertainty_info['color'],
         'uncertainty_message': uncertainty_info['message'],
         'uncertainty_badge':   uncertainty_info['badge'],
         'show_warning':        uncertainty_info['show_warning'],
-        # ──────────────────────────────────────────────────
     }
 
+    # ── FREE MEMORY AFTER PREDICTION ──
+    model = None
+    gc.collect()
 
+    return result
+    
 def match_symptoms_from_text(text):
     text_lower = text.lower().strip()
     if not text_lower:
