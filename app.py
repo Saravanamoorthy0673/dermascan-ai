@@ -38,9 +38,6 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dermascan-secret-key-20
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
 
 db = SQLAlchemy(app)
-
-with app.app_context():
-    db.create_all()
     
 MODEL_PATH  = 'model/skin_disease_model.h5'
 IMAGE_SIZE  = (224, 224)
@@ -169,6 +166,13 @@ class Episode(db.Model):
             'notes':      self.notes,
             'scan_count': len(self.scans),
         }
+
+
+# ✅ AFTER ALL MODELS
+with app.app_context():
+    db.create_all()
+    print("✅ Tables created successfully")
+
 
 # ─── LOGIN REQUIRED DECORATOR ─────────────────────────────────────
 def login_required(f):
